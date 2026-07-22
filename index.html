@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐝 ШМЕЛЬ-ТАЙКУН | ПРЕМИУМ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: #0a0a12;
+            background-image: 
+                radial-gradient(ellipse at 20% 50%, rgba(100, 50, 200, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(200, 100, 50, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 100%, rgba(50, 150, 200, 0.08) 0%, transparent 50%),
+                repeating-linear-gradient(0deg, transparent, transparent 100px, rgba(255,255,255,0.01) 100px, rgba(255,255,255,0.01) 101px);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Звёзды */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .game-wrapper {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(10, 10, 25, 0.85);
+            backdrop-filter: blur(30px);
+            border-radius: 50px;
+            padding: 28px 30px 30px;
+            box-shadow: 
+                0 0 80px rgba(100, 200, 255, 0.05),
+                0 0 160px rgba(100, 200, 255, 0.02),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .game-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.02) 0%, transparent 60%);
+            animation: bg-glow 10s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes bg-glow {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.3; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffd700 0%, #ff8c00 30%, #ffd700 60%, #f5a623 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gold-shine 4s ease-in-out infinite;
+            text-shadow: 0 0 60px rgba(255, 215, 0, 0.15);
+            letter-spacing: 3px;
+        }
+        @keyframes gold-shine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .header-stats {
+            display: flex;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+        .header-stat {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .header-stat span {
+            color: #ffd700;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 1;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(15px);
+            padding: 12px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .stat-card:hover {
+            border-color: rgba(255, 215, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        .stat-label {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+        .stat-value {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-top: 4px;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
+        }
+        .stat-value.gold { 
+            color: #ffd700;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.15);
+        }
+        .stat-value.green { 
+            color: #4ade80;
+            text-shadow: 0 0 40px rgba(74, 222, 128, 0.15);
+        }
+        .stat-value.blue { 
+            color: #60a5fa;
+            text-shadow: 0 0 40px rgba(96, 165, 250, 0.15);
+        }
+        .stat-value.pink { 
+            color: #f472b6;
+            text-shadow: 0 0 40px rgba(244, 114, 182, 0.15);
+        }
+        .stat-value.orange { 
+            color: #fb923c;
+            text-shadow: 0 0 40px rgba(251, 146, 60, 0.15);
+        }
+
+        .field-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            padding: 24px 20px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            position: relative;
+            min-height: 340px;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+        .field-area::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
+            pointer-events: none;
+        }
+
+        .hive-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin: 8px 0 14px;
+            position: relative;
+            z-index: 5;
+        }
+        .hive-slot {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            aspect-ratio: 1 / 0.85;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.04);
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100px;
+            overflow: hidden;
+            padding: 10px;
+        }
+        .hive-slot::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 215, 0, 0.03) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .hive-slot.has-bee {
+            border-color: rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.03), inset 0 0 40px rgba(255, 215, 0, 0.02);
+        }
+        .hive-slot.has-bee::before {
+            opacity: 1;
+        }
+        .hive-slot.has-honey {
+            border-color: rgba(74, 222, 128, 0.15);
+            box-shadow: 0 0 40px rgba(74, 222, 128, 0.02);
+        }
+        .hive-slot.full {
+            border-color: rgba(251, 146, 60, 0.3);
+            box-shadow: 0 0 60px rgba(251, 146, 60, 0.05), inset 0 0 60px rgba(251, 146, 60, 0.02);
+            animation: slot-pulse 2s ease-in-out infinite;
+        }
+        @keyframes slot-pulse {
+            0%, 100% { border-color: rgba(251, 146, 60, 0.3); }
+            50% { border-color: rgba(251, 146, 60, 0.5); box-shadow: 0 0 80px rgba(251, 146, 60, 0.08); }
+        }
+        .hive-slot .slot-number {
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.12);
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .hive-slot .bee-icon {
+            font-size: 2.6rem;
+            line-height: 1;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.15));
+            animation: bee-float 3s ease-in-out infinite;
+        }
+        .hive-slot .bee-icon.fast {
+            animation-duration: 1.5s;
+        }
+        @keyframes bee-float {
+            0%, 100% { transform: translateY(0px) rotate(-3deg) scale(1); }
+            50% { transform: translateY(-8px) rotate(3deg) scale(1.05); }
+        }
+        .hive-slot .no-bee {
+            font-size: 2rem;
+            opacity: 0.15;
+        }
+        .hive-slot .honey-fill {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        .hive-slot .fill-bar {
+            width: 85%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            margin-top: 6px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        .hive-slot .fill-bar-inner {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #f5a623, #ffd700);
+            background-size: 200% 100%;
+            border-radius: 10px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .hive-slot .fill-bar-inner.full {
+            background: linear-gradient(90deg, #fb923c, #f97316, #fb923c);
+            background-size: 200% 100%;
+            animation: shimmer-full 2s ease-in-out infinite;
+        }
+        @keyframes shimmer-full {
+            0%, 100% { background-position: 0% 50%; box-shadow: 0 0 30px rgba(251, 146, 60, 0.2); }
+            50% { background-position: 100% 50%; box-shadow: 0 0 50px rgba(251, 146, 60, 0.3); }
+        }
+        .hive-slot .slot-status {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.15);
+            margin-top: 4px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .hive-slot .slot-status.active {
+            color: #4ade80;
+        }
+        .hive-slot .slot-status.waiting {
+            color: #fb923c;
+            animation: status-pulse 2s ease-in-out infinite;
+        }
+        @keyframes status-pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .conveyor-area {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 14px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 6px;
+            position: relative;
+            z-index: 5;
+            flex-wrap: wrap;
+            backdrop-filter: blur(10px);
+        }
+        .conveyor-icon {
+            font-size: 1.6rem;
+            opacity: 0.4;
+        }
+        .conveyor-belt {
+            flex: 2;
+            min-width: 200px;
+            height: 56px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .conveyor-belt::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(90deg, 
+                transparent 0px, 
+                transparent 20px, 
+                rgba(255, 255, 255, 0.01) 20px, 
+                rgba(255, 255, 255, 0.01) 40px
+            );
+            pointer-events: none;
+        }
+        .conveyor-belt::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            animation: belt-glow 4s ease-in-out infinite;
+        }
+        @keyframes belt-glow {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        .honey-drop {
+            font-size: 1.8rem;
+            position: absolute;
+            transition: left 0.15s linear;
+            opacity: 0;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.2));
+        }
+        .honey-drop.active {
+            opacity: 1;
+            animation: drop-glow 1s ease-in-out infinite alternate;
+        }
+        @keyframes drop-glow {
+            0% { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.2)); }
+            100% { filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.4)); }
+        }
+        .conveyor-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            min-width: 110px;
+        }
+        .conveyor-money {
+            font-weight: 800;
+            color: #4ade80;
+            text-align: center;
+            font-size: 1.2rem;
+            background: rgba(74, 222, 128, 0.04);
+            padding: 4px 18px;
+            border-radius: 30px;
+            border: 1px solid rgba(74, 222, 128, 0.06);
+            text-shadow: 0 0 30px rgba(74, 222, 128, 0.1);
+        }
+        .conveyor-honey-count {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin: 14px 0 12px;
+            position: relative;
+            z-index: 1;
+        }
+        .btn {
+            border: none;
+            border-radius: 18px;
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .btn:hover::before {
+            opacity: 1;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn:disabled {
+            opacity: 0.25;
+            transform: scale(0.96);
+            pointer-events: none;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(245, 166, 35, 0.03));
+            border-color: rgba(255, 215, 0, 0.12);
+            color: #ffd700;
+        }
+        .btn-gold:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.05);
+        }
+        .btn-blue {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.08), rgba(59, 130, 246, 0.03));
+            border-color: rgba(96, 165, 250, 0.12);
+            color: #60a5fa;
+        }
+        .btn-blue:hover {
+            border-color: rgba(96, 165, 250, 0.3);
+            box-shadow: 0 10px 40px rgba(96, 165, 250, 0.05);
+        }
+        .btn-green {
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.08), rgba(34, 197, 94, 0.03));
+            border-color: rgba(74, 222, 128, 0.12);
+            color: #4ade80;
+        }
+        .btn-green:hover {
+            border-color: rgba(74, 222, 128, 0.3);
+            box-shadow: 0 10px 40px rgba(74, 222, 128, 0.05);
+        }
+        .btn-red {
+            background: linear-gradient(135deg, rgba(244, 114, 182, 0.08), rgba(236, 72, 153, 0.03));
+            border-color: rgba(244, 114, 182, 0.12);
+            color: #f472b6;
+        }
+        .btn-red:hover {
+            border-color: rgba(244, 114, 182, 0.3);
+            box-shadow: 0 10px 40px rgba(244, 114, 182, 0.05);
+        }
+        .btn-orange {
+            background: linear-gradient(135deg, rgba(251, 146, 60, 0.08), rgba(249, 115, 22, 0.03));
+            border-color: rgba(251, 146, 60, 0.12);
+            color: #fb923c;
+        }
+        .btn-orange:hover {
+            border-color: rgba(251, 146, 60, 0.3);
+            box-shadow: 0 10px 40px rgba(251, 146, 60, 0.05);
+        }
+        .cost-badge {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            line-height: 2;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .btn-gold .cost-badge { color: rgba(255, 215, 0, 0.3); }
+        .btn-blue .cost-badge { color: rgba(96, 165, 250, 0.3); }
+        .btn-green .cost-badge { color: rgba(74, 222, 128, 0.3); }
+        .btn-red .cost-badge { color: rgba(244, 114, 182, 0.3); }
+        .btn-orange .cost-badge { color: rgba(251, 146, 60, 0.3); }
+
+        .warning-text {
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 4px;
+            min-height: 22px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .info-text {
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 2px;
+            min-height: 22px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .upgrade-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .upgrade-item {
+            background: rgba(255, 255, 255, 0.015);
+            border-radius: 16px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            transition: all 0.3s;
+        }
+        .upgrade-item:hover {
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        .upgrade-item .btn-small {
+            background: rgba(255, 255, 255, 0.04);
+            border: none;
+            border-radius: 14px;
+            padding: 3px 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            transition: all 0.3s;
+        }
+        .upgrade-item .btn-small:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .upgrade-item .btn-small:active {
+            transform: scale(0.93);
+        }
+        .upgrade-item .btn-small:disabled {
+            opacity: 0.2;
+            pointer-events: none;
+        }
+        .upgrade-level {
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .footer-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.75rem;
+            flex-wrap: wrap;
+            gap: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .footer-stats span {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+        }
+
+        .offline-notification {
+            background: rgba(255, 215, 0, 0.06);
+            border: 1px solid rgba(255, 215, 0, 0.12);
+            border-radius: 20px;
+            padding: 12px 20px;
+            margin-bottom: 12px;
+            color: #ffd700;
+            text-align: center;
+            font-weight: 600;
+            animation: pulse-gold 2s ease-in-out infinite;
+            backdrop-filter: blur(10px);
+        }
+        @keyframes pulse-gold {
+            0%, 100% { opacity: 0.6; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Частицы мёда */
+        .honey-particle {
+            position: absolute;
+            font-size: 0.8rem;
+            pointer-events: none;
+            animation: particle-float 4s ease-in-out infinite;
+            opacity: 0;
+        }
+        @keyframes particle-float {
+            0% { transform: translateY(0) rotate(0deg) scale(0); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-60px) rotate(360deg) scale(0); opacity: 0; }
+        }
+
+        @media (max-width: 600px) {
+            .hive-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stats-panel { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .game-wrapper { padding: 16px; border-radius: 30px; }
+            h1 { font-size: 1.8rem; }
+            .actions { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .header { flex-direction: column; gap: 10px; align-items: stretch; }
+            .header-stats { justify-content: center; padding: 6px 14px; }
+            .conveyor-belt { min-width: 100px; height: 44px; }
+            .honey-drop { font-size: 1.4rem; }
+            .stat-value { font-size: 1.4rem; }
+            .btn { font-size: 0.8rem; padding: 10px 12px; }
+            .field-area { padding: 14px 12px 12px; min-height: 260px; }
+            .conveyor-area { padding: 10px 12px; }
+        }
+    </style>
+</head>
+<body>
+<!-- Звёзды -->
+<div class="stars" id="stars"></div>
+
+<div class="game-wrapper">
+    <div class="header">
+        <h1>🐝 ШМЕЛЬ-ТАЙКУН</h1>
+        <div class="header-stats">
+            <div class="header-stat">⭐ <span id="prestigeCountDisplay">0</span></div>
+            <div class="header-stat">🕐 <span id="timeDisplay">0</span>с</div>
+        </div>
+    </div>
+
+    <div class="stats-panel">
+        <div class="stat-card">
+            <span class="stat-label">💰 Деньги</span>
+            <span class="stat-value gold" id="moneyDisplay">10</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">🍯 Мёд</span>
+            <span class="stat-value" id="honeyDisplay">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">🏠 Соты</span>
+            <span class="stat-value blue" id="slotsDisplay">1</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">🐝 Шмели</span>
+            <span class="stat-value green" id="beesDisplay">1</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">⚡ Доход</span>
+            <span class="stat-value pink" id="incomeDisplay">0</span>
+        </div>
+    </div>
+
+    <div id="offlineNotification" class="offline-notification" style="display:none;">
+        ⏰ Вы отсутствовали! Накоплено: <span id="offlineHoney">0</span> 🍯 мёда!
+    </div>
+
+    <div class="field-area" id="fieldArea">
+        <div class="hive-grid" id="hiveGrid"></div>
+
+        <div class="conveyor-area">
+            <span class="conveyor-icon">⚙️</span>
+            <div class="conveyor-belt" id="conveyorBelt">
+                <span class="honey-drop" id="honeyDrop1" style="left:5%;">🍯</span>
+                <span class="honey-drop" id="honeyDrop2" style="left:25%;">🍯</span>
+                <span class="honey-drop" id="honeyDrop3" style="left:45%;">🍯</span>
+                <span class="honey-drop" id="honeyDrop4" style="left:65%;">🍯</span>
+                <span class="honey-drop" id="honeyDrop5" style="left:85%;">🍯</span>
+            </div>
+            <div class="conveyor-info">
+                <div class="conveyor-money">+$<span id="beltMoney">0</span></div>
+                <div class="conveyor-honey-count">🍯 <span id="conveyorHoneyCount">0</span> на конвейере</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-gold" id="addSlotBtn">🏠 + Соты <span class="cost-badge" id="slotCostDisplay">15</span></button>
+        <button class="btn btn-blue" id="buyBeeBtn">🐝 + Шмель <span class="cost-badge" id="beeCostDisplay">10</span></button>
+        <button class="btn btn-green" id="clickHoneyBtn">🍯 Собрать</button>
+        <button class="btn btn-orange" id="collectConveyorBtn">📦 Вывести мёд</button>
+        <button class="btn btn-red" id="prestigeBtn">⭐ Престиж <span class="cost-badge">1000</span></button>
+    </div>
+
+    <div id="warningMessage" class="warning-text"></div>
+    <div id="infoMessage" class="info-text"></div>
+
+    <div class="upgrade-grid">
+        <div class="upgrade-item">
+            <span>🚀 Скорость <span class="upgrade-level" id="speedLevelDisplay">1</span></span>
+            <button class="btn-small" id="upgradeSpeedBtn">⬆ <span id="speedCostDisplay">20</span>$</button>
+        </div>
+        <div class="upgrade-item">
+            <span>🏺 Вместимость <span class="upgrade-level" id="capacityLevelDisplay">1</span></span>
+            <button class="btn-small" id="upgradeCapacityBtn">⬆ <span id="capacityCostDisplay">25</span>$</button>
+        </div>
+        <div class="upgrade-item">
+            <span>⚙️ Конвейер <span class="upgrade-level" id="conveyorLevelDisplay">1</span></span>
+            <button class="btn-small" id="upgradeConveyorBtn">⬆ <span id="conveyorCostDisplay">18</span>$</button>
+        </div>
+        <div class="upgrade-item">
+            <span>🐌 Улитка <span class="upgrade-level" id="snailCountDisplay">0</span></span>
+            <button class="btn-small" id="buySnailBtn">🐌 <span id="snailCostDisplay">30</span>$</button>
+        </div>
+    </div>
+
+    <div class="footer-stats">
+        <div>⭐ Всего собрано: <span id="totalMoneyDisplay">0</span>$</div>
+        <div>🏆 Престижей: <span id="prestigeCountDisplay2">0</span></div>
+        <div>🐝 Активных: <span id="beesDisplay2">1</span></div>
+        <div>🏠 Свободных: <span id="freeSlotsDisplay">0</span></div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        // ========== СОЗДАНИЕ ЗВЁЗД ==========
+        function createStars() {
+            const container = document.getElementById('stars');
+            for (let i = 0; i < 120; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (2 + Math.random() * 4) + 's');
+                star.style.animationDelay = Math.random() * 4 + 's';
+                container.appendChild(star);
+            }
+        }
+        createStars();
+
+        // ========== СОСТОЯНИЕ ==========
+        let state = {
+            money: 10,
+            honey: 0,
+            slots: 1,
+            bees: 1,
+            slotCapacity: 2,
+            speedLevel: 1,
+            capacityLevel: 1,
+            conveyorLevel: 1,
+            snails: 0,
+            totalMoney: 0,
+            prestigeCount: 0,
+            gameTime: 0,
+            hiveSlots: [],
+            beeAssignments: [],
+            conveyorHoney: 0,
+            lastTime: Date.now(),
+            dropPositions: [5, 25, 45, 65, 85]
+        };
+
+        // ========== ЦЕНЫ ==========
+        let prices = {
+            slotCost: 15,
+            beeCost: 10,
+            speedCost: 20,
+            capacityCost: 25,
+            conveyorCost: 18,
+            snailCost: 30
+        };
+
+        // ========== DOM ==========
+        const $ = id => document.getElementById(id);
+        const moneyDisplay = $('moneyDisplay');
+        const honeyDisplay = $('honeyDisplay');
+        const slotsDisplay = $('slotsDisplay');
+        const beesDisplay = $('beesDisplay');
+        const incomeDisplay = $('incomeDisplay');
+        const beltMoney = $('beltMoney');
+        const conveyorHoneyCount = $('conveyorHoneyCount');
+        const totalMoneyDisplay = $('totalMoneyDisplay');
+        const timeDisplay = $('timeDisplay');
+        const prestigeCountDisplay = $('prestigeCountDisplay');
+        const prestigeCountDisplay2 = $('prestigeCountDisplay2');
+        const beesDisplay2 = $('beesDisplay2');
+        const freeSlotsDisplay = $('freeSlotsDisplay');
+        const hiveGrid = $('hiveGrid');
+        const offlineNotification = $('offlineNotification');
+        const offlineHoney = $('offlineHoney');
+        const warningMessage = $('warningMessage');
+        const infoMessage = $('infoMessage');
+        const collectConveyorBtn = $('collectConveyorBtn');
+        const fieldArea = $('fieldArea');
+
+        const honeyDropElements = [
+            $('honeyDrop1'),
+            $('honeyDrop2'),
+            $('honeyDrop3'),
+            $('honeyDrop4'),
+            $('honeyDrop5')
+        ];
+
+        // ========== ЧАСТИЦЫ МЁДА ==========
+        function createHoneyParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'honey-particle';
+            particle.textContent = '✨';
+            particle.style.left = x + '%';
+            particle.style.top = y + '%';
+            particle.style.animationDuration = (3 + Math.random() * 2) + 's';
+            particle.style.animationDelay = Math.random() * 0.5 + 's';
+            fieldArea.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 5000);
+        }
+
+        function spawnHoneyParticles() {
+            for (let i = 0; i < 3; i++) {
+                const x = 10 + Math.random() * 80;
+                const y = 20 + Math.random() * 60;
+                createHoneyParticle(x, y);
+            }
+        }
+
+        // ========== РЕНДЕР СОТ ==========
+        function renderHive() {
+            hiveGrid.innerHTML = '';
+            let freeSlots = 0;
+            let fullSlots = 0;
+            
+            for (let i = 0; i < state.hiveSlots.length; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'hive-slot';
+                
+                const honeyCount = state.hiveSlots[i];
+                const hasBee = state.beeAssignments[i] !== null && state.beeAssignments[i] !== undefined;
+                const isFull = honeyCount >= state.slotCapacity;
+                
+                if (hasBee) slot.classList.add('has-bee');
+                if (honeyCount > 0) slot.classList.add('has-honey');
+                if (isFull) slot.classList.add('full');
+                if (!hasBee) freeSlots++;
+                if (isFull) fullSlots++;
+                
+                const percent = Math.min((honeyCount / state.slotCapacity) * 100, 100);
+                
+                let beeDisplay = '';
+                let statusText = '';
+                let statusClass = '';
+                
+                if (hasBee) {
+                    const speedClass = state.speedLevel > 3 ? 'fast' : '';
+                    beeDisplay = `<div class="bee-icon ${speedClass}">🐝</div>`;
+                    if (isFull) {
+                        statusText = '🔄 ждёт конвейер';
+                        statusClass = 'waiting';
+                    } else {
+                        statusText = '✅ работает';
+                        statusClass = 'active';
+                    }
+                } else {
+                    beeDisplay = `<div class="no-bee">⬜</div>`;
+                    statusText = '❌ пусто';
+                    statusClass = '';
+                }
+                
+                slot.innerHTML = `
+                    <span class="slot-number">#${i+1}</span>
+                    ${beeDisplay}
+                    <span class="honey-fill">${Math.floor(honeyCount)}/${state.slotCapacity}</span>
+                    <div class="fill-bar">
+                        <div class="fill-bar-inner ${isFull ? 'full' : ''}" style="width:${percent}%;"></div>
+                    </div>
+                    <span class="slot-status ${statusClass}">${statusText}</span>
+                `;
+                hiveGrid.appendChild(slot);
+            }
+            
+            freeSlotsDisplay.textContent = freeSlots;
+            
+            const totalBees = state.bees;
+            
+            if (fullSlots > 0) {
+                infoMessage.textContent = `🔄 ${fullSlots} сот${fullSlots > 1 ? 'ы' : 'а'} полн${fullSlots > 1 ? 'ы' : 'а'}. Конвейер работает!`;
+                infoMessage.style.color = '#fb923c';
+            } else {
+                infoMessage.textContent = '';
+            }
+            
+            if (totalBees > state.hiveSlots.length) {
+                warningMessage.textContent = `⚠️ ${totalBees} шмелей, но только ${state.hiveSlots.length} сот!`;
+                warningMessage.style.color = '#fb923c';
+            } else if (totalBees < state.hiveSlots.length && freeSlots > 0) {
+                warningMessage.textContent = `💡 ${freeSlots} свободных сот. Купите шмелей!`;
+                warningMessage.style.color = '#60a5fa';
+            } else {
+                warningMessage.textContent = '';
+            }
+        }
+
+        // ========== ПЕРЕРАСПРЕДЕЛЕНИЕ ШМЕЛЕЙ ==========
+        function redistributeBees() {
+            const newAssignments = [];
+            let beesToAssign = state.bees;
+            
+            for (let i = 0; i < state.hiveSlots.length; i++) {
+                if (beesToAssign > 0) {
+                    newAssignments.push(i);
+                    beesToAssign--;
+                } else {
+                    newAssignments.push(null);
+                }
+            }
+            
+            state.beeAssignments = newAssignments;
+            renderHive();
+        }
+
+        // ========== ОБНОВЛЕНИЕ UI ==========
+        function updateUI() {
+            moneyDisplay.textContent = Math.floor(state.money);
+            honeyDisplay.textContent = Math.floor(state.honey);
+            slotsDisplay.textContent = state.slots;
+            beesDisplay.textContent = state.bees;
+            beesDisplay2.textContent = state.bees;
+            conveyorHoneyCount.textContent = Math.floor(state.conveyorHoney);
+            
+            const activeBees = state.beeAssignments.filter(b => b !== null).length;
+            const income = (activeBees * state.speedLevel * 0.3 * 1.8 * (1 + state.conveyorLevel * 0.1)) + (state.snails * 0.5);
+            incomeDisplay.textContent = income.toFixed(1);
+            
+            $('slotCostDisplay').textContent = Math.floor(prices.slotCost);
+            $('beeCostDisplay').textContent = Math.floor(prices.beeCost);
+            $('speedCostDisplay').textContent = Math.floor(prices.speedCost);
+            $('capacityCostDisplay').textContent = Math.floor(prices.capacityCost);
+            $('conveyorCostDisplay').textContent = Math.floor(prices.conveyorCost);
+            $('snailCostDisplay').textContent = Math.floor(prices.snailCost);
+            
+            $('speedLevelDisplay').textContent = state.speedLevel;
+            $('capacityLevelDisplay').textContent = state.capacityLevel;
+            $('conveyorLevelDisplay').textContent = state.conveyorLevel;
+            $('snailCountDisplay').textContent = state.snails;
+            
+            totalMoneyDisplay.textContent = Math.floor(state.totalMoney);
+            prestigeCountDisplay.textContent = state.prestigeCount;
+            prestigeCountDisplay2.textContent = state.prestigeCount;
+            timeDisplay.textContent = Math.floor(state.gameTime);
+            
+            $('addSlotBtn').disabled = (state.money < prices.slotCost);
+            $('buyBeeBtn').disabled = (state.money < prices.beeCost);
+            $('upgradeSpeedBtn').disabled = (state.money < prices.speedCost);
+            $('upgradeCapacityBtn').disabled = (state.money < prices.capacityCost);
+            $('upgradeConveyorBtn').disabled = (state.money < prices.conveyorCost);
+            $('buySnailBtn').disabled = (state.money < prices.snailCost);
+            $('prestigeBtn').disabled = (state.money < 1000);
+            collectConveyorBtn.disabled = (state.conveyorHoney < 0.1);
+        }
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        function initHive() {
+            state.hiveSlots = [];
+            state.beeAssignments = [];
+            for (let i = 0; i < state.slots; i++) {
+                state.hiveSlots.push(0);
+                state.beeAssignments.push(null);
+            }
+            redistributeBees();
+        }
+
+        // ========== РАБОТА ШМЕЛЕЙ ==========
+        function workBees() {
+            const honeyPerBee = 0.3 * state.speedLevel;
+            let totalCollected = 0;
+            
+            for (let i = 0; i < state.beeAssignments.length; i++) {
+                const beeId = state.beeAssignments[i];
+                if (beeId === null) continue;
+                
+                const space = state.slotCapacity - state.hiveSlots[i];
+                if (space > 0) {
+                    const addAmount = Math.min(space, honeyPerBee);
+                    state.hiveSlots[i] += addAmount;
+                    totalCollected += addAmount;
+                }
+            }
+            
+            if (totalCollected > 0) {
+                state.honey += totalCollected;
+                if (Math.random() < 0.3) {
+                    spawnHoneyParticles();
+                }
+            }
+            
+            renderHive();
+            updateUI();
+        }
+
+        // ========== КОНВЕЙЕР ==========
+        function processConveyor() {
+            if (state.hiveSlots.length === 0) return;
+            
+            const processingSpeed = 0.4 * state.conveyorLevel;
+            let taken = 0;
+            
+            let fullSlots = [];
+            let nonFullSlots = [];
+            
+            for (let i = 0; i < state.hiveSlots.length; i++) {
+                if (state.hiveSlots[i] >= state.slotCapacity) {
+                    fullSlots.push(i);
+                } else if (state.hiveSlots[i] > 0) {
+                    nonFullSlots.push(i);
+                }
+            }
+            
+            let slotsToProcess = [...fullSlots, ...nonFullSlots];
+            
+            for (let i = 0; i < slotsToProcess.length; i++) {
+                const index = slotsToProcess[i];
+                if (state.hiveSlots[index] > 0) {
+                    const take = Math.min(state.hiveSlots[index], processingSpeed);
+                    state.hiveSlots[index] -= take;
+                    taken += take;
+                    break;
+                }
+            }
+            
+            if (taken > 0) {
+                state.conveyorHoney += taken;
+                animateConveyor();
+                
+                const belt = $('conveyorBelt');
+                belt.style.borderColor = 'rgba(255, 215, 0, 0.2)';
+                belt.style.boxShadow = '0 0 50px rgba(255, 215, 0, 0.05)';
+                setTimeout(() => {
+                    belt.style.borderColor = '';
+                    belt.style.boxShadow = '';
+                }, 600);
+            }
+            
+            renderHive();
+            updateUI();
+        }
+
+        // ========== АНИМАЦИЯ КОНВЕЙЕРА ==========
+        let animationFrame = null;
+        let dropPositions = [5, 25, 45, 65, 85];
+
+        function animateConveyor() {
+            honeyDropElements.forEach((drop, index) => {
+                drop.classList.add('active');
+            });
+            
+            if (animationFrame) cancelAnimationFrame(animationFrame);
+            
+            function moveDrops() {
+                dropPositions = dropPositions.map(p => {
+                    let newPos = p + 0.35;
+                    if (newPos > 95) newPos = 5;
+                    return newPos;
+                });
+                
+                honeyDropElements.forEach((drop, index) => {
+                    const offset = Math.random() * 8 - 4;
+                    drop.style.left = (dropPositions[index] + offset) + '%';
+                    drop.style.opacity = 0.5 + Math.random() * 0.5;
+                });
+                
+                if (state.conveyorHoney > 0) {
+                    animationFrame = requestAnimationFrame(moveDrops);
+                } else {
+                    honeyDropElements.forEach(drop => {
+                        drop.classList.remove('active');
+                        drop.style.opacity = '0';
+                    });
+                }
+            }
+            
+            if (state.conveyorHoney > 0) {
+                moveDrops();
+            }
+        }
+
+        // ========== ВЫВЕСТИ МЁД ==========
+        function collectConveyorHoney() {
+            if (state.conveyorHoney < 0.1) return;
+            
+            const earned = state.conveyorHoney * 1.8 * (1 + state.conveyorLevel * 0.1);
+            state.money += earned;
+            state.totalMoney += earned;
+            
+            beltMoney.textContent = Math.floor(earned);
+            const belt = $('conveyorBelt');
+            belt.style.borderColor = 'rgba(74, 222, 128, 0.4)';
+            belt.style.boxShadow = '0 0 80px rgba(74, 222, 128, 0.15)';
+            setTimeout(() => {
+                belt.style.borderColor = '';
+                belt.style.boxShadow = '';
+            }, 800);
+            
+            // Эффект частиц
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const x = 20 + Math.random() * 60;
+                    const y = 30 + Math.random() * 40;
+                    createHoneyParticle(x, y);
+                }, i * 100);
+            }
+            
+            state.conveyorHoney = 0;
+            
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+            }
+            honeyDropElements.forEach(drop => {
+                drop.classList.remove('active');
+                drop.style.opacity = '0';
+            });
+            
+            updateUI();
+        }
+
+        // ========== ДЕЙСТВИЯ ==========
+        function manualCollect() {
+            state.money += 1;
+            state.totalMoney += 1;
+            spawnHoneyParticles();
+            updateUI();
+        }
+
+        function addSlot() {
+            if (state.money < prices.slotCost) return;
+            state.money -= prices.slotCost;
+            state.slots++;
+            state.hiveSlots.push(0);
+            state.beeAssignments.push(null);
+            prices.slotCost = Math.floor(prices.slotCost * 1.5) + 5;
+            
+            redistributeBees();
+            renderHive();
+            updateUI();
+        }
+
+        function buyBee() {
+            if (state.money < prices.beeCost) return;
+            state.money -= prices.beeCost;
+            state.bees++;
+            prices.beeCost = Math.floor(prices.beeCost * 1.4) + 3;
+            
+            redistributeBees();
+            renderHive();
+            updateUI();
+        }
+
+        function upgradeSpeed() {
+            if (state.money < prices.speedCost) return;
+            state.money -= prices.speedCost;
+            state.speedLevel++;
+            prices.speedCost = Math.floor(prices.speedCost * 1.6) + 8;
+            updateUI();
+        }
+
+        function upgradeCapacity() {
+            if (state.money < prices.capacityCost) return;
+            state.money -= prices.capacityCost;
+            state.capacityLevel++;
+            state.slotCapacity = state.capacityLevel + 1;
+            prices.capacityCost = Math.floor(prices.capacityCost * 1.5) + 10;
+            renderHive();
+            updateUI();
+        }
+
+        function upgradeConveyor() {
+            if (state.money < prices.conveyorCost) return;
+            state.money -= prices.conveyorCost;
+            state.conveyorLevel++;
+            prices.conveyorCost = Math.floor(prices.conveyorCost * 1.5) + 7;
+            updateUI();
+        }
+
+        function buySnail() {
+            if (state.money < prices.snailCost) return;
+            state.money -= prices.snailCost;
+            state.snails++;
+            prices.snailCost = Math.floor(prices.snailCost * 1.6) + 10;
+            updateUI();
+        }
+
+        function doPrestige() {
+            if (state.money < 1000) return;
+            state.money -= 1000;
+            state.prestigeCount++;
+            
+            state.slots = 1 + state.prestigeCount;
+            state.bees = 1 + Math.floor(state.prestigeCount / 2);
+            state.speedLevel = 1 + state.prestigeCount;
+            state.capacityLevel = 1 + state.prestigeCount;
+            state.conveyorLevel = 1 + state.prestigeCount;
+            state.snails = 0;
+            state.slotCapacity = state.capacityLevel + 1;
+            state.conveyorHoney = 0;
+            
+            prices.slotCost = 15 + state.prestigeCount * 5;
+            prices.beeCost = 10 + state.prestigeCount * 3;
+            prices.speedCost = 20 + state.prestigeCount * 8;
+            prices.capacityCost = 25 + state.prestigeCount * 10;
+            prices.conveyorCost = 18 + state.prestigeCount * 6;
+            prices.snailCost = 30 + state.prestigeCount * 10;
+            
+            state.hiveSlots = [];
+            state.beeAssignments = [];
+            for (let i = 0; i < state.slots; i++) {
+                state.hiveSlots.push(0);
+                state.beeAssignments.push(null);
+            }
+            
+            redistributeBees();
+            
+            const wrapper = document.querySelector('.game-wrapper');
+            wrapper.style.boxShadow = '0 0 120px rgba(255, 215, 0, 0.15), 0 0 240px rgba(255, 215, 0, 0.05)';
+            setTimeout(() => {
+                wrapper.style.boxShadow = '';
+            }, 2000);
+            
+            renderHive();
+            updateUI();
+        }
+
+        // ========== ОФЛАЙН ==========
+        function checkOfflineProgress() {
+            const now = Date.now();
+            const elapsed = (now - state.lastTime) / 1000;
+            
+            if (elapsed > 5) {
+                const activeBees = state.beeAssignments.filter(b => b !== null).length;
+                const honeyPerSecond = activeBees * state.speedLevel * 0.3;
+                const offlineHoneyAmount = Math.min(honeyPerSecond * elapsed * 0.5, 100);
+                
+                if (offlineHoneyAmount > 0.5) {
+                    state.conveyorHoney += offlineHoneyAmount;
+                    offlineHoney.textContent = Math.floor(offlineHoneyAmount);
+                    offlineNotification.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        offlineNotification.style.display = 'none';
+                    }, 6000);
+                    
+                    updateUI();
+                }
+            }
+            
+            state.lastTime = now;
+        }
+
+        // ========== ТИК ==========
+        function gameTick() {
+            state.gameTime++;
+            
+            if (state.snails > 0) {
+                const snailIncome = state.snails * 0.5;
+                state.money += snailIncome;
+                state.totalMoney += snailIncome;
+            }
+            
+            workBees();
+            processConveyor();
+            
+            updateUI();
+        }
+
+        // ========== СОХРАНЕНИЕ ==========
+        function saveGame() {
+            const saveData = {
+                money: state.money,
+                honey: state.honey,
+                slots: state.slots,
+                bees: state.bees,
+                slotCapacity: state.slotCapacity,
+                speedLevel: state.speedLevel,
+                capacityLevel: state.capacityLevel,
+                conveyorLevel: state.conveyorLevel,
+                snails: state.snails,
+                totalMoney: state.totalMoney,
+                prestigeCount: state.prestigeCount,
+                gameTime: state.gameTime,
+                hiveSlots: state.hiveSlots,
+                beeAssignments: state.beeAssignments,
+                conveyorHoney: state.conveyorHoney,
+                prices: prices,
+                lastTime: Date.now()
+            };
+            try {
+                localStorage.setItem('beeTycoonSave', JSON.stringify(saveData));
+            } catch(e) {}
+        }
+
+        function loadGame() {
+            try {
+                const raw = localStorage.getItem('beeTycoonSave');
+                if (!raw) return false;
+                const data = JSON.parse(raw);
+                
+                state.money = data.money || 10;
+                state.honey = data.honey || 0;
+                state.slots = data.slots || 1;
+                state.bees = data.bees || 1;
+                state.slotCapacity = data.slotCapacity || 2;
+                state.speedLevel = data.speedLevel || 1;
+                state.capacityLevel = data.capacityLevel || 1;
+                state.conveyorLevel = data.conveyorLevel || 1;
+                state.snails = data.snails || 0;
+                state.totalMoney = data.totalMoney || 0;
+                state.prestigeCount = data.prestigeCount || 0;
+                state.gameTime = data.gameTime || 0;
+                state.hiveSlots = data.hiveSlots || [0];
+                state.beeAssignments = data.beeAssignments || [null];
+                state.conveyorHoney = data.conveyorHoney || 0;
+                state.lastTime = data.lastTime || Date.now();
+                
+                if (data.prices) {
+                    prices = data.prices;
+                }
+                
+                return true;
+            } catch(e) {
+                return false;
+            }
+        }
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        function init() {
+            const loaded = loadGame();
+            
+            if (!loaded || state.hiveSlots.length === 0 || state.beeAssignments.length === 0) {
+                initHive();
+            } else {
+                if (state.hiveSlots.length !== state.beeAssignments.length) {
+                    initHive();
+                } else {
+                    renderHive();
+                }
+            }
+            
+            checkOfflineProgress();
+            updateUI();
+            
+            $('addSlotBtn').addEventListener('click', addSlot);
+            $('buyBeeBtn').addEventListener('click', buyBee);
+            $('clickHoneyBtn').addEventListener('click', manualCollect);
+            $('collectConveyorBtn').addEventListener('click', collectConveyorHoney);
+            $('upgradeSpeedBtn').addEventListener('click', upgradeSpeed);
+            $('upgradeCapacityBtn').addEventListener('click', upgradeCapacity);
+            $('upgradeConveyorBtn').addEventListener('click', upgradeConveyor);
+            $('buySnailBtn').addEventListener('click', buySnail);
+            $('prestigeBtn').addEventListener('click', doPrestige);
+            
+            setInterval(gameTick, 1000);
+            setInterval(saveGame, 5000);
+        }
+
+        init();
+    })();
+</script>
+</body>
+</html>
